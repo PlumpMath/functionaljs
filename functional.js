@@ -1,3 +1,9 @@
+
+/* start.js */
+
+;(function()
+{ 
+
 /* importGlobals.js */
 
 var global = function(f,n)
@@ -26,7 +32,7 @@ var apply   = global(Function, 'apply');
 var bind    = global(Function, 'bind');
 var call    = global(Function, 'call');
 
-/* higherOrderFunctions.js */
+/* higherOrder.js */
 
 function bindRight(f)
 {
@@ -132,4 +138,7 @@ var STRING    = bindRight(add, '');
 var BOOL      = compose(not, not);
 
 var sum = folder(add);
-var len = folder(increment);
+
+/* end.js */
+
+})();

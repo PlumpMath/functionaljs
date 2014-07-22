@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+
+var files   = JSON.parse(fs.readFileSync('build.json')).files;
+
+var __dir__ = 'component/';
+var __ext__ = '.js';
+
+var __newline__ = '\n';
+
+var __output__ = 'functional';
+
+function filename(x)
+{
+  return x + __ext__;
+}
+
+function comment(x)
+{
+  return '/* ' + x + ' */';
+}
+
+function twice(x)
+{
+  return x + x;
+}
+
+function write()
+{
+  fs.writeFile(filename(__output__), files.reduce(function (a, b)
+  {
+    var fn = filename(b);
+    return a + __newline__ + comment(fn) + twice(__newline__) + fs.readFileSync(__dir__ + fn);
+  }, ''), function (err)
+  {
+    if (err) throw err;
+    console.log('saved file to `' + filename(__output__) + '`');
+  });
+}
+
+files.forEach(function (a)
+{
+  fs.watch(__dir__ + filename(a), function (event, filename)
+  {
+    if (filename) console.log('change detected to `' + filename + '`');
+    write();
+  });
+});

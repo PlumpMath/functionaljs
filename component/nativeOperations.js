@@ -66,4 +66,3 @@ var STRING    = bindRight(add, '');
 var BOOL      = compose(not, not);
 
 var sum = folder(add);
-var len = folder(increment);

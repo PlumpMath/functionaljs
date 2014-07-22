@@ -1,4 +1,3 @@
-
 var global = function(f,n)
 {
   if (f.prototype[n]) {
