@@ -1,23 +1,23 @@
-function bindRight(f)
+var bindRight = Functional.bindRight = function(f)
 {
   return bind(function ()
   {
-    console.log(concat(slice(arguments, 1), arguments[0]));
     return apply(f, concat(slice(arguments, 1), arguments[0]));
   }, slice(arguments, 1));
 }
 
-var array = bindRight(slice, 0);
+var array = Functional.array = bindRight(slice, 0);
 
-function binder(f1)
+var binder = Functional.binder = function(f1)
 {
   return function ()
   {
+    puts(arguments);
     return bindRight(f1, array(arguments));
   }
 }
 
-function compose(f, g)
+var compose = Functional.compose = function(f, g)
 {
   return function ()
   {
@@ -25,9 +25,9 @@ function compose(f, g)
   }
 }
 
-var mapper    = binder(map);
-var folder    = binder(fold);
-var concater  = binder(concat);
-var slicer    = binder(slice);
-var finder    = binder(find);
-var filterer  = binder(filter);
+var mapper    = Functional.mapper    = binder(map);
+var folder    = Functional.folder    = binder(fold);
+var concater  = Functional.concater  = binder(concat);
+var slicer    = Functional.slicer    = binder(slice);
+var finder    = Functional.finder    = binder(find);
+var filterer  = Functional.filterer  = binder(filter);

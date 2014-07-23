@@ -1,68 +1,75 @@
-function get(a, n)
+Functional.get = function(a, n)
 {
   return a[n];
 }
 
-function not(a)
+Functional.not = function(a)
 {
   return !a;
 }
 
-function OR(a, b)
+Functional.bitwise = {};
+
+Functional.bitwise.or = function(a, b)
 {
   return a | b;
 }
 
-function AND(a, b)
+Functional.bitwise.and = function(a, b)
 {
   return a & b;
 }
 
-function multiply(a, b)
+Functional.multiply = function(a, b)
 {
   return a*b;
 }
 
-var negative = bind(multiply, -1);
+Functional.negate = bind(Functional.multiply, -1);
 
-function divide(a, b)
+Functional.divide = function(a, b)
 {
   return a/b;
 }
 
-var reciprocal = bind(divide, 1);
+Functional.reciprocal = bind(Functional.divide, 1);
 
-function add(a, b)
+Functional.add = function(a, b)
 {
   return a + b;
 }
 
-var increment = bindRight(add, 1);
+Functional.increment = bindRight(Functional.add, 1);
 
-function subtract(a, b)
+Functional.subtract = function(a, b)
 {
-  return add(negative(b), a);
+  return this.add(this.negate(b), a);
 }
 
-var decrement = bindRight(subtract, 1);
+Functional.decrement = bindRight(Functional.subtract, 1);
 
-function or(a, b)
+Functional.or = function(a, b)
 {
   return a || b;
 }
 
-function and(a, b)
+Functional.and = function(a, b)
 {
   return a && b;
 }
 
-function FLOAT(x)
+Functional.type = {};
+
+Functional.type.float = function(x)
 {
   return +x;
 }
 
-var INT       = bindRight(OR, 0);
-var STRING    = bindRight(add, '');
-var BOOL      = compose(not, not);
+Functional.type.int     = bindRight(Functional.bitwise.or, 0);
+Functional.type.string  = bindRight(Functional.add, '');
+Functional.type.bool    = compose(Functional.not, Functional.not);
 
-var sum = folder(add);
+Functional.array = {};
+
+Functional.array.sum = folder(Functional.add);
+Functional.array.len = folder(Functional.increment);

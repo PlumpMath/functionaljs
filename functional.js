@@ -2,7 +2,28 @@
 /* start.js */
 
 ;(function()
-{ 
+{
+
+  var root = this;
+
+  var Functional = {};
+
+/* debugging.js */
+
+var color = {
+  'red':    '\033[0;31m',
+  'green':  '\033[0;32m',
+  'yellow': '\033[0;33m',
+  'blue':   '\033[0;34m',
+  'reset':  '\033[0m'
+}
+
+function puts(json, send)
+{
+  return (send)
+    ? console.log(JSON.stringify(json))
+    : null;
+}
 
 /* importGlobals.js */
 
@@ -21,39 +42,39 @@ var global = function(f,n)
   }
 }
 
-var map     = global(Array, 'map');
-var fold    = global(Array, 'reduce');
-var concat  = global(Array, 'concat');
-var slice   = global(Array, 'slice');
-var find    = global(Array, 'find');
-var filter  = global(Array, 'filter');
+var map     = Functional.map     = global(Array, 'map');
+var fold    = Functional.fold    = global(Array, 'reduce');
+var concat  = Functional.concat  = global(Array, 'concat');
+var slice   = Functional.slice   = global(Array, 'slice');
+var find    = Functional.find    = global(Array, 'find');
+var filter  = Functional.filter  = global(Array, 'filter');
 
-var apply   = global(Function, 'apply');
-var bind    = global(Function, 'bind');
-var call    = global(Function, 'call');
+var apply   = Functional.apply   = global(Function, 'apply');
+var bind    = Functional.bind    = global(Function, 'bind');
+var call    = Functional.call    = global(Function, 'call');
 
 /* higherOrder.js */
 
-function bindRight(f)
+var bindRight = Functional.bindRight = function(f)
 {
   return bind(function ()
   {
-    console.log(concat(slice(arguments, 1), arguments[0]));
     return apply(f, concat(slice(arguments, 1), arguments[0]));
   }, slice(arguments, 1));
 }
 
-var array = bindRight(slice, 0);
+var array = Functional.array = bindRight(slice, 0);
 
-function binder(f1)
+var binder = Functional.binder = function(f1)
 {
   return function ()
   {
+    puts(arguments);
     return bindRight(f1, array(arguments));
   }
 }
 
-function compose(f, g)
+var compose = Functional.compose = function(f, g)
 {
   return function ()
   {
@@ -61,84 +82,92 @@ function compose(f, g)
   }
 }
 
-var mapper    = binder(map);
-var folder    = binder(fold);
-var concater  = binder(concat);
-var slicer    = binder(slice);
-var finder    = binder(find);
-var filterer  = binder(filter);
+var mapper    = Functional.mapper    = binder(map);
+var folder    = Functional.folder    = binder(fold);
+var concater  = Functional.concater  = binder(concat);
+var slicer    = Functional.slicer    = binder(slice);
+var finder    = Functional.finder    = binder(find);
+var filterer  = Functional.filterer  = binder(filter);
 
 /* nativeOperations.js */
 
-function get(a, n)
+Functional.get = function(a, n)
 {
   return a[n];
 }
 
-function not(a)
+Functional.not = function(a)
 {
   return !a;
 }
 
-function OR(a, b)
+Functional.bitwise = {};
+
+Functional.bitwise.or = function(a, b)
 {
   return a | b;
 }
 
-function AND(a, b)
+Functional.bitwise.and = function(a, b)
 {
   return a & b;
 }
 
-function multiply(a, b)
+Functional.multiply = function(a, b)
 {
   return a*b;
 }
 
-var negative = bind(multiply, -1);
+Functional.negate = bind(Functional.multiply, -1);
 
-function divide(a, b)
+Functional.divide = function(a, b)
 {
   return a/b;
 }
 
-var reciprocal = bind(divide, 1);
+Functional.reciprocal = bind(Functional.divide, 1);
 
-function add(a, b)
+Functional.add = function(a, b)
 {
   return a + b;
 }
 
-var increment = bindRight(add, 1);
+Functional.increment = bindRight(Functional.add, 1);
 
-function subtract(a, b)
+Functional.subtract = function(a, b)
 {
-  return add(negative(b), a);
+  return this.add(this.negate(b), a);
 }
 
-var decrement = bindRight(subtract, 1);
+Functional.decrement = bindRight(Functional.subtract, 1);
 
-function or(a, b)
+Functional.or = function(a, b)
 {
   return a || b;
 }
 
-function and(a, b)
+Functional.and = function(a, b)
 {
   return a && b;
 }
 
-function FLOAT(x)
+Functional.type = {};
+
+Functional.type.float = function(x)
 {
   return +x;
 }
 
-var INT       = bindRight(OR, 0);
-var STRING    = bindRight(add, '');
-var BOOL      = compose(not, not);
+Functional.type.int     = bindRight(Functional.bitwise.or, 0);
+Functional.type.string  = bindRight(Functional.add, '');
+Functional.type.bool    = compose(Functional.not, Functional.not);
 
-var sum = folder(add);
+Functional.array = {};
+
+Functional.array.sum = folder(Functional.add);
+Functional.array.len = folder(Functional.increment);
 
 /* end.js */
 
+  module.export = Functional;
 })();

@@ -2,6 +2,14 @@
 
 var fs = require('fs');
 
+var color = {
+  'red':    '\033[0;31m',
+  'green':  '\033[0;32m',
+  'yellow': '\033[0;33m',
+  'blue':   '\033[0;34m',
+  'reset':  '\033[0m'
+}
+
 var files   = JSON.parse(fs.readFileSync('build.json')).files;
 
 var __dir__ = 'component/';
@@ -31,19 +39,23 @@ function write()
   fs.writeFile(filename(__output__), files.reduce(function (a, b)
   {
     var fn = filename(b);
+    console.log('\r\t+ ' + color.yellow + fn + color.reset);
     return a + __newline__ + comment(fn) + twice(__newline__) + fs.readFileSync(__dir__ + fn);
   }, ''), function (err)
   {
     if (err) throw err;
-    console.log('saved file to `' + filename(__output__) + '`');
+    console.log('done\t>> ' + color.green + filename(__output__) + color.reset + __newline__);
   });
 }
 
 files.forEach(function (a)
 {
-  fs.watch(__dir__ + filename(a), function (event, filename)
+  fs.watch(__dir__ + filename(a), (function (fn)
   {
-    if (filename) console.log('change detected to `' + filename + '`');
-    write();
-  });
+    return function (event, filename)
+    {
+      console.log('\t% ' + fn);
+      write();
+    }
+  })(filename(a)));
 });
